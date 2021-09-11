@@ -3,7 +3,7 @@ import Foundation
 public class MangaScraperService {
     public static let shared = MangaScraperService()
     
-    private var list: [Source]
+    public var list: [Source]
     
     public init() {
         self.list = [NepNepSource.MangaSee123Source, NepNepSource.Manga4LifeSource]
