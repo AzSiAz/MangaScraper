@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SwiftSoup",
+        "repositoryURL": "https://github.com/scinfu/SwiftSoup.git",
+        "state": {
+          "branch": "master",
+          "revision": "02c63b7be50bda384f22c56c64d347231754a07e",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftyJSON",
+        "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
+        "state": {
+          "branch": "master",
+          "revision": "b3dcd7dbd0d488e1a7077cb33b00f2083e382f07",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
