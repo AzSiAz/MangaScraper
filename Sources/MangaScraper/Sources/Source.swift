@@ -87,7 +87,7 @@ public typealias SourcePaginatedSmallManga = (mangas: [SourceSmallManga], hasNex
 
 public protocol Source {
     var name: String { get }
-    var id: Int { get }
+    var id: UUID { get }
     var versionNumber: Float { get }
     var updatedAt: Date { get }
     var lang: SourceLang { get }
@@ -106,5 +106,5 @@ public protocol Source {
 }
 
 public protocol MultiSource: Source {
-    init(baseUrl: String, icon: String, id: Int, name: String)
+    init(baseUrl: String, icon: String, id: UUID, name: String)
 }

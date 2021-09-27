@@ -60,11 +60,11 @@ private struct LDJSONInfo: Codable {
 }
 
 public class NepNepSource: MultiSource {
-    static let MangaSee123Source = NepNepSource(baseUrl: "https://mangasee123.com", icon: "https://mangasee123.com/media/favicon.png", id: 1, name: "MangaSee")
-    static let Manga4LifeSource = NepNepSource(baseUrl: "https://manga4life.com", icon: "https://manga4life.com/media/favicon.png", id: 2, name: "MangaLife")
+    static let MangaSee123Source = NepNepSource(baseUrl: "https://mangasee123.com", icon: "https://mangasee123.com/media/favicon.png", id: UUID(uuidString: "FFAECF22-DBB3-4B13-B4AF-665DC31CE775")!, name: "MangaSee")
+    static let Manga4LifeSource = NepNepSource(baseUrl: "https://manga4life.com", icon: "https://manga4life.com/media/favicon.png", id: UUID(uuidString: "B6127CD7-A9C0-4610-8491-47DFCFD90DBC")!, name: "MangaLife")
 
     public var icon: String
-    public var id: Int
+    public var id: UUID
     public var name: String
     public var baseUrl: String
     public var lang = SourceLang.en
@@ -75,7 +75,7 @@ public class NepNepSource: MultiSource {
 
     private var directory: [MangaSeeDirectoryManga] = []
 
-    public required init(baseUrl: String, icon: String, id: Int, name: String) {
+    public required init(baseUrl: String, icon: String, id: UUID, name: String) {
         self.baseUrl = baseUrl
         self.icon = icon
         self.id = id

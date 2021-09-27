@@ -13,7 +13,7 @@ public class MangaScraperService {
         return []
     }
     
-    public func getSource(sourceId: Int) -> Source? {
+    public func getSource(sourceId: UUID) -> Source? {
         return list.first { $0.id == sourceId }
     }
 }
