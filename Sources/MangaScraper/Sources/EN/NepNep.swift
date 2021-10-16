@@ -174,7 +174,9 @@ public class NepNepSource: MultiSource {
         // ideal: https://fan-official.lastation.us/manga/Magika-No-Kenshi-To-Shoukan-Maou/0076-001.png / https://fan-official.lastation.us/manga/Magika-No-Kenshi-To-Shoukan-Maou/0076-010.png
         let images = (1 ... vmCurrChapterJSON["Page"].intValue).map { number -> SourceChapterImage in
             let i = "000\(number)"
-            return SourceChapterImage(index: number, imageUrl: "https://\(path)\(chNum)-0\(i[i.index(i.endIndex, offsetBy: -2)...]).png")
+            let imageNum = i[i.index(i.endIndex, offsetBy: -3)...]
+            
+            return SourceChapterImage(index: number, imageUrl: "https://\(path)\(chNum)-\(imageNum).png")
         }
 
         return images
@@ -233,8 +235,16 @@ public class NepNepSource: MultiSource {
             : t
 
         let b = Int(chapterIndex[chapterIndex.index(chapterIndex.endIndex, offsetBy: -1)...])
-
-        return b == 0 ? a : "\(a).\(b!)"
+        
+        if (b == 0 && !a.isEmpty) {
+            return a
+        }
+        else if (b == 0 && a.isEmpty) {
+            return "0"
+        }
+        else {
+            return "\(a).\(b!)"
+        }
     }
 
     private func chapterURLEncode(_ chapterIndex: String) throws -> String {
