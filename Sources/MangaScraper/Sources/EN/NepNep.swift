@@ -253,13 +253,13 @@ public class NepNepSource: MultiSource {
         var suffix = ""
 
         let t = Int(chapterIndex[...chapterIndex.startIndex])
-        if t != 1 {
-            index = "-index-\(t!)"
-        }
+        if t != 1 { index = "-index-\(t!)"}
 
-        let dgt = intChapterIndex < 100_100 ? 4 : intChapterIndex < 101_000 ? 3 : intChapterIndex < 110_000 ? 2 : 1
+        let dgt = intChapterIndex < 100_000 ? 3 : intChapterIndex < 100_100 ? 4 : intChapterIndex < 101_000 ? 3 : intChapterIndex < 110_000 ? 2 : 1
         
-        let n = chapterIndex[chapterIndex.index(chapterIndex.startIndex, offsetBy: dgt) ... chapterIndex.index(chapterIndex.endIndex, offsetBy: -1)]
+        let startIndex = chapterIndex.index(chapterIndex.startIndex, offsetBy: dgt)
+        let endIndex = chapterIndex.index(chapterIndex.endIndex, offsetBy: -2)
+        let n = chapterIndex[startIndex...endIndex]
 
         let path = Int(chapterIndex[chapterIndex.index(before: chapterIndex.endIndex)...])
         if path != 0 {
