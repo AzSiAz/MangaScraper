@@ -258,8 +258,8 @@ public class NepNepSource: MultiSource {
         }
 
         let dgt = intChapterIndex < 100_100 ? 4 : intChapterIndex < 101_000 ? 3 : intChapterIndex < 110_000 ? 2 : 1
-
-        let n = chapterIndex[chapterIndex.index(chapterIndex.startIndex, offsetBy: dgt) ... chapterIndex.index(chapterIndex.endIndex, offsetBy: -2)]
+        
+        let n = chapterIndex[chapterIndex.index(chapterIndex.startIndex, offsetBy: dgt) ... chapterIndex.index(chapterIndex.endIndex, offsetBy: -1)]
 
         let path = Int(chapterIndex[chapterIndex.index(before: chapterIndex.endIndex)...])
         if path != 0 {
