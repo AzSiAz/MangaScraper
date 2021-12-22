@@ -108,3 +108,5 @@ public protocol Source {
 public protocol MultiSource: Source {
     init(baseUrl: String, icon: String, id: UUID, name: String)
 }
+
+extension Identifiable where Self: Source {}
