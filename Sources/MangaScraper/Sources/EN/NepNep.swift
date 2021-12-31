@@ -131,7 +131,11 @@ public class NepNepSource: MultiSource {
     }
 
     public func fetchChapterImages(mangaId: String, chapterId: String) async throws -> [SourceChapterImage] {
-        let html = try await fetchHtml(url: "\(baseUrl)/read-online/\(chapterId).html")
+        var html = try await fetchHtml(url: "\(baseUrl)/read-online/\(chapterId).html")
+        
+        if html.range(of: "MainFunction")?.upperBound == nil {
+            html = try await fetchHtml(url: "\(baseUrl)/read-online/\(chapterId)")
+        }
 
         guard let interrestingPartIndex = html.range(of: "MainFunction")?.upperBound else {
             throw SourceError.parseError(error: "[NepNep] MainFunction not found")

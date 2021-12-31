@@ -13,9 +13,14 @@ final class MangaScraperTests: XCTestCase {
 //      https://mangasee123.com/read-online/The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady-chapter-11.1-page-1.html
 //      The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady-chapter-11.1
         do {
-            let c = try await NepNepSource.MangaSee123Source.fetchChapterImages(
+            let c1 = try await NepNepSource.MangaSee123Source.fetchChapterImages(
                 mangaId: "The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady",
                 chapterId: "The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady-chapter-11.1"
+            )
+            print(c1)
+            let c = try await NepNepSource.MangaSee123Source.fetchChapterImages(
+                mangaId: "The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady",
+                chapterId: "The-Magical-Revolution-of-the-Reincarnated-Princess-and-the-Genius-Young-Lady-chapter-11.2"
             )
             print(c)
         } catch {
