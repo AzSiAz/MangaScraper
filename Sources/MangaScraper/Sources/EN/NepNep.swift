@@ -105,16 +105,16 @@ public class NepNepSource: MultiSource {
         let interestingPart = "div.BoxBody > div.row"
 
         guard let title = try doc.select("\(interestingPart) h1").first()?.text().trimmingCharacters(in: .whitespacesAndNewlines) else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] title not found")
         }
         guard let cover = try doc.select("\(interestingPart) img").first()?.attr("src") else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] cover not found")
         }
         guard let synopsis = try doc.select("\(interestingPart) div.Content").first()?.text().trimmingCharacters(in: .whitespacesAndNewlines) else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] synopsis not found")
         }
         guard let rawStatus = try doc.select("\(interestingPart) li.list-group-item:has(span:contains(Status)) a:contains(Scan)").first()?.text().trimmingCharacters(in: .whitespacesAndNewlines) else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] status not found")
         }
 
         let rawType = try doc.select("\(interestingPart) li.list-group-item:has(span:contains(Type))").first()?.text().trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -134,29 +134,29 @@ public class NepNepSource: MultiSource {
         let html = try await fetchHtml(url: "\(baseUrl)/read-online/\(chapterId).html")
 
         guard let interrestingPartIndex = html.range(of: "MainFunction")?.upperBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] MainFunction not found")
         }
 
         let interrestingPart = String(html[interrestingPartIndex...])
 
         guard let vmCurrChapterUpper = interrestingPart.range(of: "vm.CurChapter = ")?.upperBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] vmCurrChapterUpper not found")
         }
         guard let vmCurrPathNameLower = interrestingPart.range(of: "vm.CurPathName")?.lowerBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] vmCurrPathNameLower not found")
         }
         guard let vmCurrPathNameUpper = interrestingPart.range(of: "vm.CurPathName = ")?.upperBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] vmCurrPathNameUpper not found")
         }
         guard let vmChapterLower = interrestingPart.range(of: "vm.CHAPTERS")?.lowerBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] vmChapterLower not found")
         }
 
         guard let vmCurrChapterRaw = interrestingPart[vmCurrChapterUpper ... vmCurrPathNameLower]
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: ";", with: "")
             .dropLast()
-            .data(using: .utf8) else { throw SourceError.parseError }
+            .data(using: .utf8) else { throw SourceError.parseError(error: "[NepNep] vmCurrChapterRaw not found") }
 
         let vmCurrPathName = interrestingPart[vmCurrPathNameUpper ... vmChapterLower]
             .dropFirst()
@@ -248,7 +248,7 @@ public class NepNepSource: MultiSource {
     }
 
     private func chapterURLEncode(_ chapterIndex: String) throws -> String {
-        guard let intChapterIndex = Int(chapterIndex) else { throw SourceError.parseError }
+        guard let intChapterIndex = Int(chapterIndex) else { throw SourceError.parseError(error: "[NepNep] intChapterIndex not found") }
         var index = ""
         var suffix = ""
 
@@ -289,24 +289,24 @@ public class NepNepSource: MultiSource {
 
     private func extractDirectoryFromResponse(html: String) throws -> [MangaSeeDirectoryManga] {
         guard let interrestingPartIndex = html.range(of: "MainFunction")?.upperBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] MainFunction not found")
         }
         let interrestingPart = String(html[interrestingPartIndex...])
 
         guard let vmDirectoryStartIndex = interrestingPart.range(of: "vm.Directory = ")?.upperBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] vmDirectoryStartIndex not found")
         }
         guard let vmDirectoryEndIndex = interrestingPart.range(of: "vm.GetIntValue")?.lowerBound else {
-            throw SourceError.parseError
+            throw SourceError.parseError(error: "[NepNep] vmDirectoryEndIndex not found")
         }
 
         let vmDirectory = interrestingPart[vmDirectoryStartIndex ... vmDirectoryEndIndex]
-        guard let lastBracket = vmDirectory.lastIndex(of: "]") else { throw SourceError.parseError }
+        guard let lastBracket = vmDirectory.lastIndex(of: "]") else { throw SourceError.parseError(error: "[NepNep] lastBracket not found") }
 
         guard let jsonData = vmDirectory[...lastBracket]
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: ";", with: "")
-            .data(using: .utf8) else { throw SourceError.parseError }
+            .data(using: .utf8) else { throw SourceError.parseError(error: "[NepNep] jsonData not found") }
 
         let rawData: [MangaSeeDirectoryMangaRaw] = try JSONDecoder().decode([MangaSeeDirectoryMangaRaw].self, from: jsonData)
 

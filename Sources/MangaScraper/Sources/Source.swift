@@ -8,7 +8,7 @@
 import Foundation
 
 public enum SourceError: Error {
-    case parseError
+    case parseError(error: String)
     case websiteError
     case fetchError
 }
