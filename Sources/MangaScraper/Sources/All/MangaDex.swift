@@ -43,7 +43,7 @@ public struct MangaDex: Source {
         
         let title = detail.attributes?.title?.en
         
-        let cover = detail.relationships?
+        let coverFileName = detail.relationships?
             .filter { $0.type == "cover_art" }
             .first?.attributes?.fileName
         
@@ -78,7 +78,7 @@ public struct MangaDex: Source {
         return SourceManga(
             id: detail.id!,
             title: title ?? "No title found",
-            cover: cover ?? "https://i.imgur.com/6TrIues.png",
+            cover: getCover(mangaId: id, fileName: coverFileName) ?? "https://i.imgur.com/6TrIues.png",
             genres: genres ?? [],
             authors: authors ?? [],
             alternateNames: altTitle ?? [],
