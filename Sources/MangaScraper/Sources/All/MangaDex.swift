@@ -155,7 +155,7 @@ public struct MangaDex: Source {
             chapters += try json.data?.map { d throws -> SourceChapter in
                 let volume = d.attributes?.volume != nil ? "Volume \(d.attributes!.volume!) " : ""
                 let chapter = d.attributes?.chapter != nil ? d.attributes!.chapter! : "0"
-                let chapterTitle = d.attributes?.title != nil ? " - \(d.attributes!.title!)" : ")"
+                let chapterTitle = d.attributes?.title != nil ? " - \(d.attributes!.title!)" : ""
                 
                 let title = "\(volume)Chapter \(chapter)\(chapterTitle)"
                 let date = try Date(d.attributes!.publishAt!, strategy: .iso8601)
