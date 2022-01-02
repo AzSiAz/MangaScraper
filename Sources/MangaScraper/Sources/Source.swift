@@ -11,12 +11,14 @@ public enum SourceError: Error {
     case parseError(error: String)
     case websiteError
     case fetchError
+    case notImplemented
 }
 
 public enum SourceLang: String, CaseIterable {
     case fr = "French"
     case en = "English"
     case jp = "Japanese"
+    case all = "All"
 }
 
 public enum SourceMangaCompletion: String, CaseIterable {
@@ -95,6 +97,7 @@ public protocol Source {
     var baseUrl: String { get }
     var supportsLatest: Bool  { get }
     var headers: [String:String] { get }
+    var nsfw: Bool { get }
     
     func fetchPopularManga(page: Int) async throws -> SourcePaginatedSmallManga
     func fetchLatestUpdates(page: Int) async throws -> SourcePaginatedSmallManga

@@ -71,7 +71,8 @@ public class NepNepSource: MultiSource {
     public var supportsLatest = true
     public var headers = ["User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/77.0"]
     public var versionNumber: Float = 1.0
-    public var updatedAt = Date.from(year: 2021, month: 01, day: 07)
+    public var nsfw: Bool = false
+    public var updatedAt = Date.from(year: 2021, month: 12, day: 31)
 
     private var directory: [MangaSeeDirectoryManga] = []
 
