@@ -1,3 +1,3 @@
 # MangaScraper
 
-A description of this package.
+Package used in https://github.com/AzSiAz/Dokusho
