@@ -98,8 +98,7 @@ public struct MangaDex: Source {
         guard let hash = json.chapter?.hash else { throw SourceError.websiteError }
         guard let baseURL = json.baseURL else { throw SourceError.websiteError }
 
-        return try json.chapter?.data?.map { c throws -> SourceChapterImage in
-            guard let index = Int(c.split(separator: "-", maxSplits: 1).first ?? "0") else { throw SourceError.parseError(error: "[MangaDex] Error splitting \(c)") }
+        return try json.chapter?.data?.enumerated().map { (index, c) throws -> SourceChapterImage in
             return SourceChapterImage(index: index, imageUrl: "\(baseURL)/data/\(hash)/\(c)")
         }.compactMap({ $0 }) ?? []
     }
