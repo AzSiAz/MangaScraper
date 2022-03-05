@@ -78,7 +78,7 @@ public struct MangaDex: Source {
         return SourceManga(
             id: detail.id!,
             title: title ?? "No title found",
-            cover: getCover(mangaId: id, fileName: coverFileName) ?? "https://i.imgur.com/6TrIues.png",
+            cover: getCover(mangaId: id, fileName: coverFileName),
             genres: genres ?? [],
             authors: authors ?? [],
             alternateNames: altTitle ?? [],
@@ -90,15 +90,17 @@ public struct MangaDex: Source {
     }
     
     public func fetchChapterImages(mangaId: String, chapterId: String) async throws -> [SourceChapterImage] {
-        let html = try await fetchHtml(url: "https://api.mangadex.org/chapter?manga=\(mangaId)&ids[]=\(chapterId)")
+        //
+        let html = try await fetchHtml(url: "https://api.mangadex.org/at-home/server/\(chapterId)?forcePort443=false")
         guard let data = html.data(using: .utf8) else { throw SourceError.parseError(error: "[MangaDex] Error getting data for `MangaDexMangaDetailREST`")}
-        
-        guard let json = try JSONDecoder().decode(MangaDexChapterImagesREST.self, from: data).data else { throw SourceError.fetchError }
 
-        return try json.first?.attributes?.data?.map { c throws -> SourceChapterImage in
+        guard let json = try? JSONDecoder().decode(MangaDexChapterImagesREST.self, from: data) else { throw SourceError.parseError(error: "[MangaDex] Error parsing json response") }
+        guard let hash = json.chapter?.hash else { throw SourceError.websiteError }
+        guard let baseURL = json.baseURL else { throw SourceError.websiteError }
+
+        return try json.chapter?.data?.map { c throws -> SourceChapterImage in
             guard let index = Int(c.split(separator: "-", maxSplits: 1).first ?? "0") else { throw SourceError.parseError(error: "[MangaDex] Error splitting \(c)") }
-    
-            return SourceChapterImage(index: index, imageUrl: c)
+            return SourceChapterImage(index: index, imageUrl: "\(baseURL)/data/\(hash)/\(c)")
         }.compactMap({ $0 }) ?? []
     }
     
