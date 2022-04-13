@@ -84,7 +84,7 @@ public struct MangaDex: Source {
             alternateNames: altTitle ?? [],
             status: status,
             synopsis: detail.attributes?.description?.en ?? "",
-            chapters: try await fetChapters(mangaId: detail.id!),
+            chapters: try await fetchChapters(mangaId: detail.id!),
             type: type
         )
     }
@@ -138,7 +138,7 @@ public struct MangaDex: Source {
         fileName != nil ? "https://uploads.mangadex.org/covers/\(mangaId)/\(fileName!).256.jpg" : "https://i.imgur.com/6TrIues.png"
     }
     
-    private func fetChapters(mangaId: String) async throws -> [SourceChapter] {
+    private func fetchChapters(mangaId: String) async throws -> [SourceChapter] {
         var chapters = [SourceChapter]()
         var shouldRepeat = true
         var offset = 0
@@ -152,7 +152,6 @@ public struct MangaDex: Source {
 
             let limit = json.limit ?? 500
             
-            
             chapters += try json.data?.map { d throws -> SourceChapter in
                 let volume = d.attributes?.volume != nil ? "Volume \(d.attributes!.volume!) " : ""
                 let chapter = d.attributes?.chapter != nil ? d.attributes!.chapter! : "0"
@@ -164,7 +163,8 @@ public struct MangaDex: Source {
                 return SourceChapter(
                     name: title,
                     id: d.id!,
-                    dateUpload: date
+                    dateUpload: date,
+                    externalUrl: d.attributes?.externalUrl
                 )
             }.compactMap({ $0 }) ?? []
 

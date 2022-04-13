@@ -52,6 +52,7 @@ public struct SourceChapter: Identifiable, Equatable, Hashable {
     public var name: String
     public var id: String
     public var dateUpload: Date
+    public var externalUrl: String?
 }
 
 public struct SourceChapterImage: Identifiable, Equatable, Hashable {

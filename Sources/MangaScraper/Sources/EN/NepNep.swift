@@ -228,7 +228,7 @@ public class NepNepSource: MultiSource {
             let chapterName = rawChapter["ChapterName"].stringValue.isEmpty ? "\(type) \(chapterImage(chapter, clean: true))" : rawChapter["ChapterName"].stringValue
             let chapterId = "\(id)\(try chapterURLEncode(chapter))"
 
-            return SourceChapter(name: chapterName, id: chapterId, dateUpload: convertToDate(date))
+            return SourceChapter(name: chapterName, id: chapterId, dateUpload: convertToDate(date), externalUrl: nil)
         }
     }
 

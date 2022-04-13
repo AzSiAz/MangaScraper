@@ -32,7 +32,7 @@ struct MangaDexChapterListDatumAttributes: Codable {
     let hash: String?
     let data: [String]?
     let dataSaver: [String]?
-    let externalURL: String?
+    let externalUrl: String?
     let publishAt: String?
     let createdAt: String?
     let updatedAt: String?
