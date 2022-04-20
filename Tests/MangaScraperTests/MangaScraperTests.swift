@@ -12,6 +12,7 @@ final class MangaScraperTests: XCTestCase {
 
         do {
             let d = try await MangaDex.shared.fetchMangaDetail(id: "ac28f3f4-1bfd-491c-8403-0162379f953d")
+            print(d.title)
             print(d.chapters)
         } catch {
             print(error)

@@ -28,7 +28,7 @@ public struct MangaDex: Source {
     }
     
     public func fetchLatestUpdates(page: Int) async throws -> SourcePaginatedSmallManga {
-        return try await getMangaList(page: page)
+        return try await getMangaList(page: page, query: "order[publishAt]=desc")
     }
     
     public func fetchSearchManga(query: String, page: Int) async throws -> SourcePaginatedSmallManga {
@@ -145,6 +145,7 @@ public struct MangaDex: Source {
         
         repeat {
             let oldOffset = offset
+            print(getChapterRequestUrl(mangaId: mangaId, offset: oldOffset))
             let html = try await fetchHtml(url: getChapterRequestUrl(mangaId: mangaId, offset: oldOffset))
             guard let data = html.data(using: .utf8) else { throw SourceError.parseError(error: "[MangaDex] error getting data for `mangaDexChapterListREST` ") }
             
@@ -158,7 +159,18 @@ public struct MangaDex: Source {
                 let chapterTitle = d.attributes?.title != nil ? " - \(d.attributes!.title!)" : ""
                 
                 let title = "\(volume)Chapter \(chapter)\(chapterTitle)"
-                let date = try Date(d.attributes!.publishAt!, strategy: .iso8601)
+                var date: Date {
+                    guard let rawPublishAt = d.attributes?.publishAt else { return Date.now }
+                    guard let rawCreatedAt = d.attributes?.createdAt else { return Date.now }
+                    
+                    do {
+                        let publishAt = try Date(rawPublishAt, strategy: .iso8601)
+                        let createdAt = try? Date(rawCreatedAt, strategy: .iso8601)
+                        return publishAt > Date.now ? createdAt ?? Date.now : publishAt
+                    } catch {
+                        return Date.now
+                    }
+                }
                 
                 return SourceChapter(
                     name: title,
