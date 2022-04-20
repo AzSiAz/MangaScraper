@@ -28,7 +28,7 @@ public struct MangaDex: Source {
     }
     
     public func fetchLatestUpdates(page: Int) async throws -> SourcePaginatedSmallManga {
-        return try await getMangaList(page: page, query: "order[publishAt]=desc")
+        return try await getLatestManga(page: page)
     }
     
     public func fetchSearchManga(query: String, page: Int) async throws -> SourcePaginatedSmallManga {
@@ -112,26 +112,54 @@ public struct MangaDex: Source {
     }
     
     // TODO: MangaDex still can't order manga by latest update, workaround is to fetch last 20 chapter and fetch associated manga (no grouped chapter update), so not for now, let hope it's fixed soon
-    private func getMangaList(page: Int, query: String? = nil) async throws -> SourcePaginatedSmallManga {
+    private func getMangaList(page: Int, query: String? = nil, limit: Int = 20) async throws -> SourcePaginatedSmallManga {
         let page = page < 1 ? 1 : page
-        let offset = (page - 1) * 20;
+        let offset = (page - 1) * limit;
 
-        let html = try await fetchHtml(url: "\(baseUrl)/manga?limit=20&offset=\(offset)&includes[]=cover_art\((query != nil) ? "&\(query!)" : "")")
+        let html = try await fetchHtml(url: "\(baseUrl)/manga?limit=\(limit)&offset=\(offset)&includes[]=cover_art\((query != nil) ? "&\(query!)" : "")")
         guard let data = html.data(using: .utf8) else { throw SourceError.parseError(error: "[MangaDex] Error getting data for `MangaDexMangaListRest`")}
 
         let mangaDexMangaList = try JSONDecoder().decode(MangaDexMangaListRest.self, from: data)
-        let hasNextPage = mangaDexMangaList.offset ?? 0 < mangaDexMangaList.total ?? 0
+        let hasNextPage = mangaDexMangaList.offset < mangaDexMangaList.total
         
-        let mangas = mangaDexMangaList.data?.map { d -> SourceSmallManga in
-            let title = d.attributes?.title?.en
-            let fileName = d.relationships?
+        let mangas = mangaDexMangaList.data.map { d -> SourceSmallManga in
+            let title = d.attributes.title.en ?? d.attributes.altTitles.first(where: { $0.en != nil })?.en ?? "No title found"
+            let fileName = d.relationships
                 .filter { $0.type == "cover_art" }
                 .first?.attributes?.fileName
             
-            return SourceSmallManga(id: d.id!, title: title ?? "No title Found", thumbnailUrl: getCover(mangaId: d.id!, fileName: fileName))
+            return SourceSmallManga(id: d.id, title: title, thumbnailUrl: getCover(mangaId: d.id, fileName: fileName))
         }
         
-        return SourcePaginatedSmallManga(mangas: mangas ?? [], hasNextPage: hasNextPage)
+        return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: hasNextPage)
+    }
+    
+    private func getLatestManga(page: Int) async throws -> SourcePaginatedSmallManga {
+        let page = page < 1 ? 1 : page
+        let limit = 100
+        let offset = limit * (page - 1)
+        
+        let latestChapterHtml = try await fetchHtml(url: "\(baseUrl)/chapter?offset=\(offset)&limit=\(limit)&translatedLanguage[]=en&order[publishAt]=desc&includeFutureUpdates=0")
+        guard let data = latestChapterHtml.data(using: .utf8) else { throw SourceError.parseError(error: "[MangaDex] Error getting data for `MangaDexMangaListRest`")}
+        
+        let chaptersList = try JSONDecoder().decode(MangaDexChapterListLatestRest.self, from: data)
+        let hasNextPage = chaptersList.offset + chaptersList.limit < chaptersList.total
+        
+        let mangasIds = chaptersList.data
+            .flatMap { $0.relationships }
+            .filter { $0.type == "manga" }
+            .reduce(into: Set<String>()) { $0.insert($1.id) }
+        let mangaIdsQuery = mangasIds
+            .map{ "ids[]=\($0)" }
+            .joined(separator: "&")
+        
+        let list = try await getMangaList(page: 1, query: mangaIdsQuery, limit: mangasIds.count)
+        
+        let mangas = mangasIds.compactMap { mangaId in
+            return list.mangas.first(where: { $0.id == mangaId })
+        }
+        
+        return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: hasNextPage)
     }
     
     private func getCover(mangaId: String, fileName: String?) -> String {

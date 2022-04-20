@@ -11,9 +11,11 @@ final class MangaScraperTests: XCTestCase {
         XCTAssertEqual(MangaScraperService.shared.getSource(sourceId: UUID(uuidString: "3599756d-8fa0-4ca2-aafc-096c3d776ae1")!)?.id, MangaDex.shared.id)
 
         do {
-            let d = try await MangaDex.shared.fetchMangaDetail(id: "ac28f3f4-1bfd-491c-8403-0162379f953d")
-            print(d.title)
-            print(d.chapters)
+//            let d = try await MangaDex.shared.fetchMangaDetail(id: "ac28f3f4-1bfd-491c-8403-0162379f953d")
+//            print(d.title)
+//            print(d.chapters)
+            let d = try await MangaDex.shared.fetchLatestUpdates(page: 20)
+            print(d)
         } catch {
             print(error)
         }
