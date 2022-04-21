@@ -202,7 +202,7 @@ public class NepNepSource: MultiSource {
 
         let mangas = chunks[page - 1].map { SourceSmallManga(id: $0.id, title: $0.title, thumbnailUrl: "https://cover.nep.li/cover/\($0.id).jpg") }
         
-        return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: page != chunks.count)
+        return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: page < chunks.count)
     }
 
     private func mangaChapterListParse(_ html: String, _ id: String) throws -> [SourceChapter] {
@@ -329,7 +329,7 @@ public class NepNepSource: MultiSource {
 
         return SourcePaginatedSmallManga(mangas: chunks[page - 1].map {
             SourceSmallManga(id: $0.id, title: $0.title, thumbnailUrl: "https://cover.nep.li/cover/\($0.id).jpg")
-        }, hasNextPage: page != chunks.count)
+        }, hasNextPage: page < chunks.count)
     }
 
     private func updateDirectory(_ page: Int) async throws {

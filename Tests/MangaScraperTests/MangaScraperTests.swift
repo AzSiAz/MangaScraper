@@ -15,7 +15,8 @@ final class MangaScraperTests: XCTestCase {
 //            print(d.title)
 //            print(d.chapters)
 //            let d = try await MangaDex.shared.fetchLatestUpdates(page: 20)
-            let d = try await NepNepSource.MangaSee123Source.fetchSearchManga(query: "Test", page: 1)
+            let d = try await NepNepSource.MangaSee123Source.fetchSearchManga(query: "Isekai Kae", page: 1)
+//            let d = try await MangaDex.shared.fetchSearchManga(query: "Isekai Kae", page: 1)
             
             print(d)
         } catch {

@@ -32,7 +32,7 @@ public struct MangaDex: Source {
     }
     
     public func fetchSearchManga(query: String, page: Int) async throws -> SourcePaginatedSmallManga {
-        return try await getMangaList(page: page, query: "title=\(query)")
+        return try await getMangaList(page: page, query: "title=\(query.replacingOccurrences(of: " ", with: "%20"))")
     }
     
     public func fetchMangaDetail(id: String) async throws -> SourceManga {
