@@ -194,15 +194,15 @@ public class NepNepSource: MultiSource {
     public func checkUpdates(mangaIds _: [String]) async throws {}
 
     private func searchMangaParse(query: String, page: Int) -> SourcePaginatedSmallManga {
-        let matchingMangasChunks = directory.filter { mangaInDirectory -> Bool in
+        let chunks = directory.filter { mangaInDirectory -> Bool in
             mangaInDirectory.title.lowercased().contains(query.lowercased()) || mangaInDirectory.alternateNames.contains(where: { alternateName -> Bool in
                 alternateName.lowercased().contains(query.lowercased())
             })
         }.chunked(into: 24)
 
-        return SourcePaginatedSmallManga(mangas: matchingMangasChunks[page].map {
-            SourceSmallManga(id: $0.id, title: $0.title, thumbnailUrl: "https://cover.nep.li/cover/\($0.id).jpg")
-        }, hasNextPage: page != matchingMangasChunks.count)
+        let mangas = chunks[page - 1].map { SourceSmallManga(id: $0.id, title: $0.title, thumbnailUrl: "https://cover.nep.li/cover/\($0.id).jpg") }
+        
+        return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: page != chunks.count)
     }
 
     private func mangaChapterListParse(_ html: String, _ id: String) throws -> [SourceChapter] {
