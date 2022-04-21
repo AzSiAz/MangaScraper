@@ -199,8 +199,8 @@ public class NepNepSource: MultiSource {
                 alternateName.lowercased().contains(query.lowercased())
             })
         }.chunked(into: 24)
-
-        let mangas = chunks[page - 1].map { SourceSmallManga(id: $0.id, title: $0.title, thumbnailUrl: "https://cover.nep.li/cover/\($0.id).jpg") }
+        
+        let mangas = chunks.count >= 1 ? chunks[page - 1].map { SourceSmallManga(id: $0.id, title: $0.title, thumbnailUrl: "https://cover.nep.li/cover/\($0.id).jpg") } : []
         
         return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: page < chunks.count)
     }
