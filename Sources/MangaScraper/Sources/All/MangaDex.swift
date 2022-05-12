@@ -155,8 +155,9 @@ public struct MangaDex: Source {
         
         let list = try await getMangaList(page: 1, query: mangaIdsQuery, limit: mangasIds.count)
         
-        let mangas = mangasIds.compactMap { mangaId in
-            return list.mangas.first(where: { $0.id == mangaId })
+        let mangas = chaptersList.data.compactMap { chapter -> SourceSmallManga? in
+            let mangaId = chapter.relationships.first(where: { $0.type == "manga" })?.id
+            return list.mangas.first(where: { $0.id == mangaId }) ?? nil
         }
         
         return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: hasNextPage)
