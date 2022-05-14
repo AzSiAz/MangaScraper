@@ -15,6 +15,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", branch: "master"),
         .package(url: "https://github.com/scinfu/SwiftSoup.git", branch: "master"),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.0.0"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -24,6 +25,7 @@ let package = Package(
             dependencies: [
                 "SwiftyJSON",
                 "SwiftSoup",
+                .product(name: "Collections", package: "swift-collections")
             ]),
         .testTarget(
             name: "MangaScraperTests",

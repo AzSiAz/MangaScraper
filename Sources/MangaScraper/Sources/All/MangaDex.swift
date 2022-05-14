@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftyJSON
+import Collections
 
 
 public struct MangaDex: Source {
@@ -148,16 +149,15 @@ public struct MangaDex: Source {
         let mangasIds = chaptersList.data
             .flatMap { $0.relationships }
             .filter { $0.type == "manga" }
-            .reduce(into: Set<String>()) { $0.insert($1.id) }
+            .reduce(into: OrderedSet<String>()) { $0.append($1.id) }
         let mangaIdsQuery = mangasIds
             .map{ "ids[]=\($0)" }
             .joined(separator: "&")
         
         let list = try await getMangaList(page: 1, query: mangaIdsQuery, limit: mangasIds.count)
         
-        let mangas = chaptersList.data.compactMap { chapter -> SourceSmallManga? in
-            let mangaId = chapter.relationships.first(where: { $0.type == "manga" })?.id
-            return list.mangas.first(where: { $0.id == mangaId }) ?? nil
+        let mangas = mangasIds.compactMap { mangaId in
+            return list.mangas.first(where: { $0.id == mangaId })
         }
         
         return SourcePaginatedSmallManga(mangas: mangas, hasNextPage: hasNextPage)
